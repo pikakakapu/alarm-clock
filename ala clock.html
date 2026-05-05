@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>slay Alarm — digital clock ✨ gen z energy</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', 'Segoe UI', system-ui, -apple-system, 'Inter', sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: radial-gradient(circle at 30% 10%, #1a1a2e, #0f0f1c);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      transition: background 0.3s ease;
+    }
+
+    /* FRESH GEN-Z VIBE: glassmorphism + pastel neon + bold rounded */
+    .clock-card {
+      max-width: 780px;
+      width: 100%;
+      background: rgba(22, 24, 45, 0.65);
+      backdrop-filter: blur(20px);
+      border-radius: 52px;
+      padding: 28px 24px 36px;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 25px 45px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05);
+      transition: all 0.2s;
+    }
+
+    /* DIGITAL CLOCK - Y2K meets genz */
+    .time-glow {
+      text-align: center;
+      background: rgba(0, 0, 0, 0.35);
+      border-radius: 48px;
+      padding: 24px 16px;
+      margin-bottom: 28px;
+      border: 1px solid rgba(255, 140, 200, 0.4);
+      box-shadow: 0 0 20px rgba(255, 80, 160, 0.2);
+    }
+
+    .clock-digits {
+      font-family: 'Fira Mono', 'JetBrains Mono', monospace;
+      font-size: 5rem;
+      font-weight: 700;
+      letter-spacing: 8px;
+      background: linear-gradient(135deg, #FFD6E8, #FFA6C9, #C084FC, #60A5FA);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      text-shadow: 0 0 8px #ff99cc80;
+    }
+
+    .meridiem-badge {
+      font-size: 1.6rem;
+      font-weight: 600;
+      background: #ffb3d1aa;
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 60px;
+      margin-left: 12px;
+      color: #1e1b2c;
+      backdrop-filter: blur(4px);
+    }
+
+    .date-panel {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 18px;
+      font-weight: 500;
+      background: rgba(0, 0, 0, 0.3);
+      width: fit-content;
+      margin-left: auto;
+      margin-right: auto;
+      padding: 8px 24px;
+      border-radius: 60px;
+      backdrop-filter: blur(4px);
+      font-size: 0.9rem;
+      color: #f0d9ff;
+    }
+
+    /* control zone — very slay */
+    .alarm-panel {
+      background: rgba(15, 18, 35, 0.7);
+      border-radius: 48px;
+      padding: 20px 22px;
+      margin: 20px 0;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      gap: 18px;
+      justify-content: space-between;
+    }
+
+    .time-flex {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      background: #00000040;
+      padding: 8px 22px;
+      border-radius: 80px;
+    }
+
+    .time-flex label {
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #fbcfe8;
+      letter-spacing: 0.5px;
+    }
+
+    input[type="time"] {
+      background: #0e1122;
+      border: 2px solid #ff88b6;
+      padding: 10px 18px;
+      border-radius: 60px;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #ffe8f0;
+      font-family: monospace;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    input[type="time"]:focus {
+      outline: none;
+      border-color: #c084fc;
+      box-shadow: 0 0 0 3px #c084fc60;
+    }
+
+    /* buttons gen-z style */
+    .btn {
+      border: none;
+      padding: 10px 24px;
+      border-radius: 60px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #2d2b44;
+      color: white;
+      box-shadow: 0 5px 0 #12101f;
+    }
+
+    .btn:active {
+      transform: translateY(2px);
+      box-shadow: 0 2px 0 #12101f;
+    }
+
+    .btn-primary {
+      background: linear-gradient(95deg, #e879f9, #c084fc);
+      box-shadow: 0 5px 0 #9b4d96;
+      color: #16001e;
+    }
+
+    .theme-buttons {
+      display: flex;
+      gap: 10px;
+      background: #03051a60;
+      padding: 6px 16px;
+      border-radius: 80px;
+    }
+
+    .theme-icon {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      padding: 6px 12px;
+      border-radius: 50px;
+      opacity: 0.6;
+      transition: 0.1s;
+    }
+
+    .theme-icon.active {
+      opacity: 1;
+      background: #de8eff40;
+      backdrop-filter: blur(10px);
+    }
+
+    /* alarm list header */
+    .alarm-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin: 16px 8px 12px;
+    }
+
+    .alarm-title {
+      font-weight: 700;
+      font-size: 1.2rem;
+      background: linear-gradient(135deg, #F9A8D4, #c4b5fd);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    .btn-clear {
+      background: #2e1f3a;
+      font-size: 0.7rem;
+      padding: 6px 14px;
+    }
+
+    /* alarm items - y2k aesthetic */
+    .alarm-list {
+      max-height: 280px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding-right: 6px;
+    }
+
+    .alarm-list-item {
+      background: rgba(30, 25, 55, 0.7);
+      backdrop-filter: blur(12px);
+      border-radius: 90px;
+      padding: 8px 20px 8px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border: 1px solid #ffa3d180;
+    }
+
+    .alarm-time-text {
+      font-family: monospace;
+      font-size: 1.55rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #ffe6f0;
+    }
+
+    .alarm-actions-group {
+      display: flex;
+      gap: 12px;
+    }
+
+    .btn-toggle {
+      background: #3b2b55;
+      padding: 6px 16px;
+      font-size: 0.7rem;
+    }
+
+    .btn-del {
+      background: #b91c4b;
+      padding: 6px 14px;
+    }
+
+    /* ringing modal - very extra */
+    .modal-ring {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(16px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      visibility: hidden;
+      opacity: 0;
+      transition: 0.2s;
+    }
+
+    .modal-ring.active {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .modal-content {
+      background: #1e1a36;
+      border-radius: 68px;
+      padding: 32px;
+      text-align: center;
+      max-width: 340px;
+      width: 85%;
+      border: 3px solid #ff96c9;
+      box-shadow: 0 0 30px #ff66aa;
+    }
+
+    .modal-content h2 {
+      font-size: 2.3rem;
+      color: #ffe484;
+    }
+
+    .btn-stop {
+      background: #f43f5e;
+    }
+
+    .btn-snooze {
+      background: #8b5cf6;
+    }
+
+    /* light theme (gen-z pastel) */
+    body.light {
+      background: radial-gradient(circle at 20% 30%, #ffe0f0, #ffe6f5);
+    }
+
+    body.light .clock-card {
+      background: rgba(255, 245, 250, 0.8);
+      border-color: #ffbfda;
+    }
+
+    body.light .clock-digits {
+      background: linear-gradient(145deg, #c2418c, #a21caf, #3b82f6);
+      background-clip: text;
+    }
+
+    body.light .alarm-panel,
+    body.light .alarm-list-item {
+      background: #ffecf2cc;
+      color: #1f0a1a;
+    }
+
+    body.light .alarm-time-text {
+      color: #a1235e;
+    }
+
+    /* scroll */
+    .alarm-list::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    .alarm-list::-webkit-scrollbar-track {
+      background: #2a2340;
+      border-radius: 20px;
+    }
+
+    .alarm-list::-webkit-scrollbar-thumb {
+      background: #f9a8d4;
+      border-radius: 20px;
+    }
+
+    @media (max-width: 560px) {
+      .clock-digits {
+        font-size: 2.8rem;
+        letter-spacing: 3px;
+      }
+      .alarm-panel {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .time-flex {
+        justify-content: space-between;
+      }
+    }
+  </style>
+</head>
+<body class="light">
+<div class="clock-card">
+  <div class="time-glow">
+    <div style="display: flex; align-items: baseline; justify-content: center; flex-wrap: wrap; gap: 6px;">
+      <span class="clock-digits" id="liveClock">--:--:--</span>
+      <span class="meridiem-badge" id="ampmBadge">--</span>
+    </div>
+    <div class="date-panel">
+      <span id="weekdaySpan">Monday</span>
+      <span>✨</span>
+      <span id="dateSpan">--</span>
+    </div>
+  </div>
+
+  <div class="alarm-panel">
+    <div class="time-flex">
+      <label>⏰ set alarm (24h)</label>
+      <input type="time" id="alarmTimeInput" value="08:00">
+    </div>
+    <button id="addAlarmBtn" class="btn btn-primary">➕ add bestie alarm</button>
+    <div class="theme-buttons">
+      <button id="darkModeBtn" class="theme-icon">🌙</button>
+      <button id="lightModeBtn" class="theme-icon active">☀️</button>
+    </div>
+  </div>
+
+  <div class="alarm-header">
+    <span class="alarm-title">⏰ my alarms · <span id="alarmCount">0</span> slay</span>
+    <button id="clearAllAlarms" class="btn btn-clear">🗑️ clear all</button>
+  </div>
+  <div class="alarm-list" id="alarmsListContainer">
+    <div style="text-align: center; padding: 24px; color: #aa99cc;">✨ no alarms yet, bestie ✨<br>add one to serve looks</div>
+  </div>
+</div>
+
+<!-- ringing modal (fr fr) -->
+<div id="alarmModal" class="modal-ring">
+  <div class="modal-content">
+    <h2>⏰ RISE & GRIND ⏰</h2>
+    <p style="font-size: 2rem; font-family: monospace; margin: 8px 0;" id="modalAlarmTime">07:30</p>
+    <p>it's giving ✨ main character ✨</p>
+    <div style="display: flex; gap: 18px; justify-content: center; margin-top: 24px;">
+      <button id="stopRingBtn" class="btn btn-stop">stop 🛑</button>
+      <button id="snoozeRingBtn" class="btn btn-snooze">snooze +5 min 😴</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ========== GEN Z ALARM CLOCK - FULL FEATURE ==========
+  // Alarms array: { id, time24, label, enabled, isSnoozeTemp? }
+  let alarmsArray = [];
+  let currentlyRinging = false;
+  let currentRingingAlarmId = null;
+  let ringIntervalId = null;
+  let audioCtx = null;
+  let beepLoopId = null;
+
+  // DOM elements
+  const liveClockSpan = document.getElementById('liveClock');
+  const ampmBadge = document.getElementById('ampmBadge');
+  const weekdaySpan = document.getElementById('weekdaySpan');
+  const dateSpan = document.getElementById('dateSpan');
+  const alarmTimeInput = document.getElementById('alarmTimeInput');
+  const addAlarmBtn = document.getElementById('addAlarmBtn');
+  const alarmsContainer = document.getElementById('alarmsListContainer');
+  const alarmCountSpan = document.getElementById('alarmCount');
+  const clearAllBtn = document.getElementById('clearAllAlarms');
+  const modal = document.getElementById('alarmModal');
+  const modalAlarmTimeSpan = document.getElementById('modalAlarmTime');
+  const stopRingBtn = document.getElementById('stopRingBtn');
+  const snoozeRingBtn = document.getElementById('snoozeRingBtn');
+  const darkBtn = document.getElementById('darkModeBtn');
+  const lightBtn = document.getElementById('lightModeBtn');
+
+  // helper: save to local storage
+  function storeAlarms() {
+    const toStore = alarmsArray.map(a => ({
+      id: a.id,
+      time24: a.time24,
+      enabled: a.enabled,
+      isSnoozeTemp: a.isSnoozeTemp || false
+    }));
+    localStorage.setItem('genzAlarmsNew', JSON.stringify(toStore));
+    updateAlarmCounter();
+    renderAlarmList();
+  }
+
+  function loadAlarms() {
+    const stored = localStorage.getItem('genzAlarmsNew');
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        alarmsArray = parsed.map(alm => ({
+          ...alm,
+          label: alm.label || "Alarm",
+          isSnoozeTemp: alm.isSnoozeTemp || false
+        }));
+      } catch(e) { alarmsArray = []; }
+    }
+    if (alarmsArray.length === 0) {
+      // add 2 demo alarms for slay energy
+      alarmsArray.push({
+        id: Date.now() + 100,
+        time24: "07:30",
+        label: "Morning glow",
+        enabled: true,
+        isSnoozeTemp: false
+      });
+      alarmsArray.push({
+        id: Date.now() + 200,
+        time24: "22:00",
+        label: "night routine",
+        enabled: true,
+        isSnoozeTemp: false
+      });
+    }
+    updateAlarmCounter();
+    renderAlarmList();
+  }
+
+  function updateAlarmCounter() {
+    const enabledCount = alarmsArray.filter(a => a.enabled).length;
+    alarmCountSpan.innerText = enabledCount;
+  }
+
+  function renderAlarmList() {
+    if (!alarmsContainer) return;
+    if (alarmsArray.length === 0) {
+      alarmsContainer.innerHTML = `<div style="text-align: center; padding: 24px; color: #aa99cc;">✨ no alarms yet, bestie ✨<br>add one to serve looks</div>`;
+      return;
+    }
+    alarmsContainer.innerHTML = '';
+    alarmsArray.forEach(alarm => {
+      const [hour24, minute] = alarm.time24.split(':');
+      let hour12 = parseInt(hour24) % 12;
+      if (hour12 === 0) hour12 = 12;
+      const ampmLabel = parseInt(hour24) >= 12 ? 'PM' : 'AM';
+      const displayNice = `${hour12.toString().padStart(2,'0')}:${minute} ${ampmLabel}`;
+      
+      const alarmDiv = document.createElement('div');
+      alarmDiv.className = 'alarm-list-item';
+      
+      const timeSpan = document.createElement('span');
+      timeSpan.className = 'alarm-time-text';
+      timeSpan.innerText = displayNice;
+      
+      const actionGroup = document.createElement('div');
+      actionGroup.className = 'alarm-actions-group';
+      
+      const toggleBtn = document.createElement('button');
+      toggleBtn.className = 'btn btn-toggle';
+      toggleBtn.innerText = alarm.enabled ? '🔔 ON' : '🔕 OFF';
+      toggleBtn.style.background = alarm.enabled ? '#6f4f8f' : '#4a3a60';
+      toggleBtn.onclick = () => {
+        alarm.enabled = !alarm.enabled;
+        storeAlarms();
+        renderAlarmList();
+        if (currentlyRinging && currentRingingAlarmId === alarm.id && !alarm.enabled) {
+          stopRingingAlarm();
+        }
+      };
+      
+      const deleteBtn = document.createElement('button');
+      deleteBtn.className = 'btn btn-del';
+      deleteBtn.innerText = '✖️';
+      deleteBtn.onclick = () => {
+        deleteAlarmById(alarm.id);
+      };
+      
+      actionGroup.appendChild(toggleBtn);
+      actionGroup.appendChild(deleteBtn);
+      alarmDiv.appendChild(timeSpan);
+      alarmDiv.appendChild(actionGroup);
+      alarmsContainer.appendChild(alarmDiv);
+    });
+  }
+
+  function deleteAlarmById(id) {
+    alarmsArray = alarmsArray.filter(a => a.id !== id);
+    if (currentlyRinging && currentRingingAlarmId === id) {
+      stopRingingAlarm();
+    }
+    storeAlarms();
+    renderAlarmList();
+  }
+
+  function clearAllAlarmsFunction() {
+    if (confirm("⚠️ delete ALL alarms? no cap ⚠️")) {
+      alarmsArray = [];
+      if (currentlyRinging) stopRingingAlarm();
+      storeAlarms();
+      renderAlarmList();
+    }
+  }
+
+  function addAlarmFromInput() {
+    let rawTime = alarmTimeInput.value;
+    if (!rawTime) return;
+    const timeRegex = /^([01]\d|2[0-3]):([0-5]\d)$/;
+    if (!timeRegex.test(rawTime)) {
+      alert("invalid time bestie! use HH:MM (24h)");
+      return;
+    }
+    // avoid duplicate exact time with active alarm
+    const duplicate = alarmsArray.some(a => a.time24 === rawTime && a.enabled === true);
+    if (duplicate) {
+      alert("you already have an active alarm at that time 💅");
+      return;
+    }
+    const newId = Date.now();
+    alarmsArray.push({
+      id: newId,
+      time24: rawTime,
+      label: "Alarm",
+      enabled: true,
+      isSnoozeTemp: false
+    });
+    storeAlarms();
+    renderAlarmList();
+  }
+
+  // ========== Web Audio Alarm (beep frenzy) ==========
+  function initAudioEngine() {
+    if (!audioCtx) {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+  }
+
+  function startAlarmSound() {
+    if (!audioCtx) initAudioEngine();
+    if (audioCtx.state === 'suspended') {
+      audioCtx.resume().then(() => startBeepLoopFunc());
+    } else {
+      startBeepLoopFunc();
+    }
+  }
+
+  function startBeepLoopFunc() {
+    if (beepLoopId) clearInterval(beepLoopId);
+    const beepSound = () => {
+      if (!currentlyRinging) return;
+      const now = audioCtx.currentTime;
+      const osc = audioCtx.createOscillator();
+      const gainNode = audioCtx.createGain();
+      osc.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+      osc.type = 'sine';
+      osc.frequency.value = 960;
+      gainNode.gain.value = 0.25;
+      osc.start();
+      gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 0.7);
+      osc.stop(now + 0.7);
+    };
+    beepSound();
+    beepLoopId = setInterval(() => {
+      if (currentlyRinging) beepSound();
+      else clearInterval(beepLoopId);
+    }, 1500);
+  }
+
+  function stopRingingAlarm() {
+    if (beepLoopId) {
+      clearInterval(beepLoopId);
+      beepLoopId = null;
+    }
+    currentlyRinging = false;
+    currentRingingAlarmId = null;
+    modal.classList.remove('active');
+  }
+
+  function snoozeAlarm() {
+    if (currentRingingAlarmId !== null) {
+      const originalAlarm = alarmsArray.find(a => a.id === currentRingingAlarmId);
+      if (originalAlarm) {
+        // disable current alarm temporarily
+        originalAlarm.enabled = false;
+        storeAlarms();
+        renderAlarmList();
+        stopRingingAlarm();
+        const now = new Date();
+        const snoozeTime = new Date(now.getTime() + 5 * 60000);
+        const snoozeHours = snoozeTime.getHours().toString().padStart(2, '0');
+        const snoozeMins = snoozeTime.getMinutes().toString().padStart(2, '0');
+        const snoozeTimeStr = `${snoozeHours}:${snoozeMins}`;
+        // Add a temporary snooze alarm (only fires once, then auto removed after trigger)
+        const snoozeId = Date.now();
+        alarmsArray.push({
+          id: snoozeId,
+          time24: snoozeTimeStr,
+          label: "snooze bestie",
+          enabled: true,
+          isSnoozeTemp: true
+        });
+        storeAlarms();
+        renderAlarmList();
+      } else {
+        stopRingingAlarm();
+      }
+    } else {
+      stopRingingAlarm();
+    }
+  }
+
+  // alarm checker every second
+  let lastMinuteTriggerMap = new Map();
+  function checkAlarmsNow(currentDate) {
+    const hours = currentDate.getHours();
+    const mins = currentDate.getMinutes();
+    const currentTimeStr = `${hours.toString().padStart(2,'0')}:${mins.toString().padStart(2,'0')}`;
+    const currentMinuteKey = `${currentDate.getFullYear()}-${currentDate.getMonth()}-${currentDate.getDate()}-${hours}:${mins}`;
+    
+    for (let alarm of alarmsArray) {
+      if (!alarm.enabled) continue;
+      if (alarm.time24 === currentTimeStr) {
+        const lastTrigger = lastMinuteTriggerMap.get(alarm.id);
+        if (lastTrigger !== currentMinuteKey) {
+          lastMinuteTriggerMap.set(alarm.id, currentMinuteKey);
+          // trigger alarm
+          if (!currentlyRinging) {
+            currentRingingAlarmId = alarm.id;
+            currentlyRinging = true;
+            modalAlarmTimeSpan.innerText = alarm.time24;
+            modal.classList.add('active');
+            initAudioEngine();
+            audioCtx.resume().then(() => startAlarmSound()).catch(e => console.log);
+          }
+          break;
+        }
+      }
+    }
+    // If alarm ringing but alarm got disabled or deleted
+    if (currentlyRinging && currentRingingAlarmId) {
+      const existsEnabled = alarmsArray.some(a => a.id === currentRingingAlarmId && a.enabled === true);
+      if (!existsEnabled) stopRingingAlarm();
+    }
+    // auto-remove temp snooze alarms after they've triggered (to keep list clean)
+    for (let i = 0; i < alarmsArray.length; i++) {
+      if (alarmsArray[i].isSnoozeTemp && alarmsArray[i].time24 === currentTimeStr && !currentlyRinging) {
+        // remove snooze alarm after its time passes but we don't want infinite, just delete it after first check (once it's consumed)
+        alarmsArray = alarmsArray.filter(a => !(a.isSnoozeTemp && a.time24 === currentTimeStr));
+        storeAlarms();
+        renderAlarmList();
+        break;
+      }
+    }
+  }
+
+  // update clock UI every tick
+  function updateClockUI() {
+    const now = new Date();
+    const hh = now.getHours().toString().padStart(2,'0');
+    const mm = now.getMinutes().toString().padStart(2,'0');
+    const ss = now.getSeconds().toString().padStart(2,'0');
+    liveClockSpan.innerText = `${hh}:${mm}:${ss}`;
+    const ampm = now.getHours() >= 12 ? 'PM' : 'AM';
+    ampmBadge.innerText = ampm;
+    const weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    weekdaySpan.innerText = weekdays[now.getDay()];
+    const options = { month: 'short', day: 'numeric', year: 'numeric' };
+    dateSpan.innerText = now.toLocaleDateString(undefined, options);
+    checkAlarmsNow(now);
+  }
+
+  // Theme System (light/dark)
+  function setTheme(themeMode) {
+    if (themeMode === 'dark') {
+      document.body.classList.remove('light');
+      document.body.style.background = "radial-gradient(circle at 30% 10%, #1a1a2e, #0f0f1c)";
+      darkBtn.classList.add('active');
+      lightBtn.classList.remove('active');
+      localStorage.setItem('genzThemePref', 'dark');
+    } else {
+      document.body.classList.add('light');
+      document.body.style.background = "radial-gradient(circle at 20% 30%, #ffe0f0, #ffe6f5)";
+      lightBtn.classList.add('active');
+      darkBtn.classList.remove('active');
+      localStorage.setItem('genzThemePref', 'light');
+    }
+  }
+
+  function loadThemePref() {
+    const savedTheme = localStorage.getItem('genzThemePref');
+    if (savedTheme === 'dark') setTheme('dark');
+    else setTheme('light');
+  }
+
+  // event listeners
+  addAlarmBtn.addEventListener('click', addAlarmFromInput);
+  clearAllBtn.addEventListener('click', clearAllAlarmsFunction);
+  stopRingBtn.addEventListener('click', () => stopRingingAlarm());
+  snoozeRingBtn.addEventListener('click', () => snoozeAlarm());
+  darkBtn.addEventListener('click', () => setTheme('dark'));
+  lightBtn.addEventListener('click', () => setTheme('light'));
+  
+  // initialisation
+  function init() {
+    loadAlarms();
+    loadThemePref();
+    updateClockUI();
+    setInterval(updateClockUI, 1000);
+    // audio unlock on first gesture
+    document.body.addEventListener('click', () => {
+      if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+    }, { once: true });
+  }
+  
+  init();
+</script>
+</body>
+</html>
